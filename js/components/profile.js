@@ -9,11 +9,13 @@ import {
 
     // BackgroundImage
 } from 'react-native';
-import {Drawer, Icon, Button, ListItem, CheckBox,Container, Header, Content, Card, CardItem, Left, Thumbnail, Body,Right,} from 'native-base';
+import {Drawer, Icon, Button, ListItem, CheckBox,Container, Header, Content, Card, CardItem, Left, Thumbnail, Body,Right, Picker,} from 'native-base';
 import { StackNavigator } from 'react-navigation';
 import SideBar from './sidebar';
 import Auth from '../firebase/auth';
 import { serviceProviders } from './data';
+
+const Item = Picker.Item;
 
 
 

@@ -1,7 +1,19 @@
 import Firebase from 'firebase';
 import React, {Component} from 'react';
 import { StyleSheet, Text, View, TextInput } from 'react-native';
-import { Container, Header, Content, Form, Item, Input, Label, Button, Card, } from 'native-base';
+import { Container, Header, Content, Form, Item, Input, Label, Card, } from 'native-base';
+
+
+import {Drawer, Icon} from 'native-base';
+import { StackNavigator } from 'react-navigation';
+
+
+import SideBar from '../components/sidebar';
+import Profile from '../components/profile';
+import MapSearch from '../components/map';
+
+import {Button} from '../components/Button';
+
 
 
 const config = {
@@ -21,7 +33,8 @@ export default class Auth extends Component{
 
     state = {
         email:'',
-        password:''
+        password:'',
+        btnContent: null,
     };
 
     handleUserEmail(text){
@@ -38,13 +51,14 @@ export default class Auth extends Component{
 
 
 
-
+    
 
     render(){
+        const { navigate } = this.props.navigation;    
         return(
-            <Container>
-                
+            <View style={styles.container}>
                 <Content>
+                
                 <Card style={styles.card}>
                     <Form>
                         <Item stackedLabel>
@@ -55,33 +69,36 @@ export default class Auth extends Component{
                             <Label>Password</Label>
                             <Input onChangeText={(text)=>this.handleUserPassword(text)} />
                         </Item>
-                        <Button style={styles.signin} block onPress={()=> this.createUser()}>
-                            <Text style={styles.btntext}>Sign In</Text>
-                        </Button>
+                       
+
 
                     </Form>
-                    <Button style={styles.signin} block onPress={() => this.changeView()}>
-                        <Text style={styles.btntext}>Go Back</Text>
-                    </Button>
+
+
                     </Card>
-                </Content>
-            </Container>
+                     <Button onPress={()=>this.toggleSignIn()}>
+                            Sign In
+                            </Button>
+                            </Content>
+               
+            </View>
         )
     }
 
-    changeView() {
-        this.props.dispatch('SWITCH_VIEW', {
-            viewNumber: 1
-        })
-    }
+    // changeView() {
+    //     this.props.dispatch('SWITCH_VIEW', {
+    //         viewNumber: 1
+    //     })
+    // }
     
     //THIS FUNCTION WILL CREATE A USER ACCOUNT AND SIGN THEM IN
      createUser() {
+        const { navigate } = this.props.navigation;    
         const email = this.state.email
         const password = this.state.password
         console.log('i was pressed!');
         //VERIFY IF EMAIL IS VALID
-        if(email.length < 4){
+        if(email.length < 4) {
             alert('Please enter a valid email address');
         }
         //VERIFY IF PASSWORD LENGTH IS VALID
@@ -89,7 +106,8 @@ export default class Auth extends Component{
             alert('Please enter password');
         }
         //FIREBASE FUNCTION TO CREATE A NEW USER AND SIGN THEM IN
-        auth.createUserWithEmailAndPassword(email, password).catch( function (error) {
+        auth.createUserWithEmailAndPassword(email, password)
+        .then(res => navigate('Prof')).catch( function (error) {
             // Handle Errors here.
             const errorCode = error.code;
             const errorMessage = error.message;
@@ -103,10 +121,15 @@ export default class Auth extends Component{
             console.log(error);
         });
     }
-}
+
+
+
 
 //THIS FUNCTION WILL HANDLE USER SIGN IN AND SIGN OUT
-export function toggleSignIn(){
+toggleSignIn(){
+     const { navigate } = this.props.navigation;    
+        const email = this.state.email
+        const password = this.state.password
     //CHECKS IF CURRENT USER IS SIGNED IN AND BEGINS SIGN OUT
     if(auth.currentUser){
         auth.signOut()
@@ -120,36 +143,103 @@ export function toggleSignIn(){
         if(password.length < 4){
             alert('Please enter a valid password!')
         }
-        auth.signInWithEmailAndPassword(email, password).catch(function (error){
-            const errorCode = error.code;
-            const errorMessage = error.message;
 
-            //CHECKS IF PASSWORD IS CORRECT
-            if (errorCode === 'auth/wrong-password') {
-                alert('You entered the worng password!')
-            } else {
-                alert(errorMessage)
-            }
-
-            console.log(error);
-        })
-     }
+        auth.signInWithEmailAndPassword(email, password)
+        .then(res => navigate('Map'))
+        .catch(() => auth.createUserWithEmailAndPassword(email, password))
+            .then(res => navigate('Prof')).catch(error =>{
+                alert('Some Error!')
+            })
+        }
+    }
 }
 
 const styles = StyleSheet.create({
+    container:{
+        flex:1,
+
+
+    },
+    content:{
+        alignContent:'center',
+        justifyContent:'center',
+    },
 
     card: {
+        alignContent:'center',
+        justifyContent:'center',
         borderRadius: 5,
         borderColor:'black',
-        margin:250,
        backgroundColor:'#9DBFC8',
-        marginTop: 5,
     },
-    signin:{
-        backgroundColor:'white',
-    },
+
     btntext:{
         color:'#9DBFC8',
     },
+});
+
+
+
+
+class MapScreen extends React.Component {
+  static navigationOptions = {
+    title: 'Search Map',
+  };
+  render() {
+    return (
+      <View>
+        <Text>Search the map.</Text>
+      </View>
+    );
+  }
+}
+
+class ProfileScreen extends React.Component {
+  static navigationOptions = {
+    title: 'Profile Page',
+  };
+  render() {
+    return (
+      <View>
+        <Text>View your profile</Text>
+      </View>
+    );
+  }
+}
+
+
+class SignUp extends React.Component {
+  static navigationOptions = {
+    title: 'Sign Up',
+  };
+  render() {
+    return (
+      <View>
+        <Text>Sign Up!</Text>
+      </View>
+    );
+  }
+}
+
+class SignOut extends React.Component {
+  static navigationOptions = {
+    title: 'Sign Out',
+  };
+  render() {
+    return (
+      <View>
+        <Text>Sign Out</Text>
+      </View>
+    );
+  }
+}
+
+
+export const SimpleApp2 = StackNavigator({
+
+  
+  Sign: { screen: Auth },
+  Prof: { screen: Profile},
+  Map: { screen: MapSearch},
 });
 
