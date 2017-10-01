@@ -34,9 +34,7 @@ class BackgroundImage extends Component {
 
 
 class Home extends Component{
-// static navigationOptions = {
-//     title: '',
-//   };
+
 
     render(){
         const { navigate } = this.props.navigation;    
@@ -52,15 +50,22 @@ class Home extends Component{
 
 
 
-
+                   <View>
                    <Button style={styles.btn}>
-                    <Icon name='create' />
-                    <Text onPress={() => navigate('Sign')}>Sign Up!</Text>
+                    <Text style={styles.whitetext} onPress={() => {
+                        navigate('Sign')
+
+                    }}>Get Started!</Text>
                     </Button>  
+                    </View>
 
 
                 <Text style={styles.text2}>Have an account?</Text>
+                <TouchableHighlight onPress={() => {
+                    navigate('Sign')
+            }}>
                 <Text style={styles.text3}>Login here.</Text>
+                </TouchableHighlight>
             </BackgroundImage>     
       </View>  
         )
@@ -172,6 +177,8 @@ const styles = StyleSheet.create({
         borderColor:'#fff',
         borderRadius: 5,
         backgroundColor:'#2D5669',
+        justifyContent:'center',
+        alignItems:'center',
     },
     container: {
         flex: 1,
@@ -206,6 +213,11 @@ const styles = StyleSheet.create({
         marginRight: -15,
        
 
+    },
+    whitetext:{
+        textAlign: 'center',
+        color: 'white',
+        fontWeight: 'bold',
     },
     text2: {
         textAlign: 'center',
